@@ -57,7 +57,7 @@ class TodoListFragment : Fragment() {
             recyclerView.adapter = adapter
             recyclerView.setHasFixedSize(false)
 
-            val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+            val swipeToDeleteCallback = object : SwipeToDeleteCallback(requireContext()) {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val position = viewHolder.adapterPosition
                     sharedViewModel.removeAt(position)
