@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.tarapogancev.todolist.MainActivity
 import com.tarapogancev.todolist.R
 import com.tarapogancev.todolist.adapter.TodoListAdapter
@@ -54,6 +56,17 @@ class TodoListFragment : Fragment() {
 
             recyclerView.adapter = adapter
             recyclerView.setHasFixedSize(false)
+
+            val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val position = viewHolder.adapterPosition
+                    sharedViewModel.removeAt(position)
+                    recyclerView.adapter?.notifyItemRemoved(position)
+                }
+            }
+
+            val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+            itemTouchHelper.attachToRecyclerView(recyclerView)
 
         }
     }

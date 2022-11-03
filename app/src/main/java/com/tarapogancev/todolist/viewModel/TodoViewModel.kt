@@ -36,4 +36,8 @@ class TodoViewModel : ViewModel() {
         _tasks.value?.find { it.id == newTask.id }?.taskTitle = newTask.taskTitle
     }
 
+    fun removeAt(position: Int) {
+        _tasks.value?.removeAt(position)
+    }
+
 }
