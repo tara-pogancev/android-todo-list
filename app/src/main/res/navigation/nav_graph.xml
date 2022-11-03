@@ -11,16 +11,22 @@
         android:label="ToDo List"
         tools:layout="@layout/fragment_todo_list">
         <action
-            android:id="@+id/action_todoListFragment_to_addNewTodo"
-            app:destination="@id/addNewTodo" />
+            android:id="@+id/action_todoListFragment_to_addNewTodoFragment"
+            app:destination="@id/addNewTodoFragment" >
+            <argument
+                android:name="id"
+                android:defaultValue="0L" />
+        </action>
     </fragment>
     <fragment
-        android:id="@+id/addNewTodo"
-        android:name="com.tarapogancev.todolist.ui.AddNewTodo"
+        android:id="@+id/addNewTodoFragment"
+        android:name="com.tarapogancev.todolist.ui.AddNewTodoFragment"
         android:label="Add New Task"
         tools:layout="@layout/fragment_add_new_todo">
-        <action
-            android:id="@+id/action_addNewTodo_to_todoListFragment"
-            app:destination="@id/todoListFragment" />
+
+        <argument
+            android:name="id"
+            app:argType="long"
+            android:defaultValue="0L" />
     </fragment>
 </navigation>

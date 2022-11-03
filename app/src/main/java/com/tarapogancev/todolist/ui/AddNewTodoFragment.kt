@@ -6,15 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.navArgs
 import com.tarapogancev.todolist.MainActivity
-import com.tarapogancev.todolist.R
 import com.tarapogancev.todolist.databinding.FragmentAddNewTodoBinding
 import com.tarapogancev.todolist.model.TodoTask
 import com.tarapogancev.todolist.navigation.Navigation
 import com.tarapogancev.todolist.viewModel.TodoViewModel
 
 
-class AddNewTodo : Fragment() {
+class AddNewTodoFragment : Fragment() {
 
     private var binding: FragmentAddNewTodoBinding? = null
 
@@ -22,7 +22,8 @@ class AddNewTodo : Fragment() {
 
     private val sharedViewModel: TodoViewModel by activityViewModels()
 
-    var task = TodoTask("", false)
+    var task = TodoTask(0, "", false)
+    private var navigationArgs : TodoTask? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,13 +37,26 @@ class AddNewTodo : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.apply {
-            newTask = task
+        navigationArgs = arguments?.getSerializable("object") as TodoTask?
 
-            buttonSave.setOnClickListener {
-                task.taskTitle = editTextTaskTitle.text.toString()
-                sharedViewModel.addNewTask(task)
-                navigation.newTaskToList()
+        binding?.apply {
+
+            if (navigationArgs == null) {
+                // NEW TASK
+                newTask = task
+                buttonSave.setOnClickListener {
+                    task.taskTitle = editTextTaskTitle.text.toString()
+                    sharedViewModel.addNewTask(task)
+                    navigation.goBack()
+                }
+            } else {
+                // EDIT TASK
+                editTextTaskTitle.setText(navigationArgs?.taskTitle)
+                buttonSave.setOnClickListener {
+                    navigationArgs?.taskTitle = editTextTaskTitle.text.toString()
+                    sharedViewModel.save(task)
+                    navigation.goBack()
+                }
             }
         }
     }

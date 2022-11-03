@@ -29,15 +29,23 @@
 
             <TextView
                 android:id="@+id/text_taskTitle"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="0.75"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
                 android:textSize="16sp"
-                android:focusable="true"
                 android:text="@{task.taskTitle}"
                 tools:text="This is my todo task." />
+
+            <CheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                />
 
         </LinearLayout>
 

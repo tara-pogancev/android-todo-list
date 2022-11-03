@@ -37,7 +37,7 @@ class TodoListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = TodoListAdapter(requireContext(), sharedViewModel.tasks)
+        val adapter = TodoListAdapter(requireContext(), sharedViewModel.tasks.value!!, navigation)
 
         binding?.apply {
             lifecycleOwner = viewLifecycleOwner
