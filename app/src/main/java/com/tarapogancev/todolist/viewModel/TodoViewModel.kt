@@ -40,4 +40,8 @@ class TodoViewModel : ViewModel() {
         _tasks.value?.removeAt(position)
     }
 
+    fun checkUncheck(task: TodoTask) {
+        _tasks.value?.find { it.id == task.id }?.isFinished = !task.isFinished
+    }
+
 }

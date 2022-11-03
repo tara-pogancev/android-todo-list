@@ -61,7 +61,7 @@ class TodoListFragment : Fragment() {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val position = viewHolder.adapterPosition
                     sharedViewModel.removeAt(position)
-                    recyclerView.adapter?.notifyItemRemoved(position)
+                    recyclerView.adapter?.notifyDataSetChanged()
                 }
             }
 
