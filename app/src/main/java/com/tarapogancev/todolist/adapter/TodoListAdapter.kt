@@ -1,10 +1,12 @@
 package com.tarapogancev.todolist.adapter
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
@@ -30,7 +32,8 @@ class TodoListAdapter(private val context: Context, private val data: LiveData<M
         holder.taskTitle.text = task?.taskTitle
 
         if (position % 2 == 0) {
-            holder.cardView.setBackgroundColor(context.resources.getColor(R.color.primaryLightColor))
+          // holder.cardView.setBackgroundColor( this.context.resources.getColor(R.color.primaryLightColor))
+            holder.cardView.setCardBackgroundColor(this.context.resources.getColor(R.color.primaryLightColor))
         }
     }
 

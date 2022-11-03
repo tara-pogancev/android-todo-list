@@ -13,10 +13,10 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView_listItem"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="70dp"
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="10dp"
-        app:cardCornerRadius="30dp"
+        app:cardCornerRadius="50dp"
         app:cardElevation="30dp">
 
         <LinearLayout
@@ -29,12 +29,13 @@
 
             <TextView
                 android:id="@+id/text_taskTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
-                android:singleLine="true"
-                android:textSize="18sp"
+                android:textSize="16sp"
+                android:focusable="true"
                 android:text="@{task.taskTitle}"
                 tools:text="This is my todo task." />
 

@@ -20,7 +20,7 @@ class TodoListFragment : Fragment() {
 
     private var binding: FragmentTodoListBinding? = null
 
-    private lateinit var navController: Navigation
+    private lateinit var navigation: Navigation
 
     private val sharedViewModel: TodoViewModel by activityViewModels()
 
@@ -28,7 +28,7 @@ class TodoListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        navController = (activity as MainActivity).navController
+        navigation = (activity as MainActivity).navController
         val fragmentBinding = FragmentTodoListBinding.inflate(inflater, container, false)
         binding = fragmentBinding
         return fragmentBinding.root
@@ -43,7 +43,7 @@ class TodoListFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
 
             buttonAddNewTask.setOnClickListener {
-                navController.listToNewTask()
+                navigation.listToNewTask()
             }
 
             if (sharedViewModel.tasks.value?.size == 0) {
