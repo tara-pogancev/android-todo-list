@@ -1,23 +1,25 @@
 package com.tarapogancev.todolist.ui
 
+import android.content.Context
+import android.content.Context.VIBRATOR_SERVICE
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.tarapogancev.todolist.MainActivity
-import com.tarapogancev.todolist.R
 import com.tarapogancev.todolist.adapter.TodoListAdapter
 import com.tarapogancev.todolist.databinding.FragmentTodoListBinding
 import com.tarapogancev.todolist.navigation.Navigation
 import com.tarapogancev.todolist.viewModel.TodoViewModel
 
+const val SHORT_VIBRATION_DURATION = 100L
 
 class TodoListFragment : Fragment() {
 
@@ -39,6 +41,8 @@ class TodoListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val vibration = context?.getSystemService(VIBRATOR_SERVICE) as Vibrator?
 
         val adapter = TodoListAdapter(requireContext(), sharedViewModel.tasks.value!!, navigation)
 
@@ -68,6 +72,7 @@ class TodoListFragment : Fragment() {
                             sharedViewModel.removeAt(position)
                             recyclerView.adapter?.notifyItemRemoved(position)
                             recyclerView.adapter?.notifyItemRangeChanged(0, sharedViewModel.tasks.value!!.size)
+                            vibration?.vibrate(SHORT_VIBRATION_DURATION)
 
                             Snackbar.make(recyclerView, deletedTask.taskTitle, Snackbar.LENGTH_LONG)
                                 .setAction("Undo", object: View.OnClickListener {
@@ -83,6 +88,7 @@ class TodoListFragment : Fragment() {
                         ItemTouchHelper.RIGHT -> {
                             val position = viewHolder.adapterPosition
                             navigation.listToEditTask(sharedViewModel.tasks.value!![position])
+                            vibration?.vibrate(SHORT_VIBRATION_DURATION)
 
                         }
                     }
