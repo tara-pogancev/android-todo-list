@@ -6,23 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.navArgs
 import com.tarapogancev.todolist.MainActivity
+import com.tarapogancev.todolist.R
 import com.tarapogancev.todolist.databinding.FragmentAddNewTodoBinding
+import com.tarapogancev.todolist.databinding.FragmentEditTodoBinding
 import com.tarapogancev.todolist.model.TodoTask
 import com.tarapogancev.todolist.navigation.Navigation
 import com.tarapogancev.todolist.viewModel.TodoViewModel
 
 
-class AddNewTodoFragment : Fragment() {
+class EditTodoFragment : Fragment() {
 
-    private var binding: FragmentAddNewTodoBinding? = null
+    private var binding: FragmentEditTodoBinding? = null
 
     private lateinit var navigation: Navigation
 
     private val sharedViewModel: TodoViewModel by activityViewModels()
-
-    var task = TodoTask(0, "", "", false)
 
     private var navigationArgs: TodoTask? = null
 
@@ -31,19 +30,26 @@ class AddNewTodoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         navigation = (activity as MainActivity).navController
-        binding = FragmentAddNewTodoBinding.inflate(inflater, container, false)
+        navigation = (activity as MainActivity).navController
+        binding = FragmentEditTodoBinding.inflate(inflater, container, false)
         return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        navigationArgs = arguments?.getSerializable("object") as TodoTask?
+
         binding?.apply {
-            newTask = task
+            editTextTaskTitle.setText(navigationArgs?.taskTitle)
+            editTextTaskDescription.setText(navigationArgs?.description)
+            checkboxIsFinished.isChecked = navigationArgs?.isFinished ?: false
+
             buttonSave.setOnClickListener {
-                task.taskTitle = editTextTaskTitle.text.toString()
-                task.description = editTextTaskDescription.text.toString()
-                sharedViewModel.addNewTask(task)
+                navigationArgs?.taskTitle = editTextTaskTitle.text.toString()
+                navigationArgs?.description = editTextTaskDescription.text.toString()
+                navigationArgs?.isFinished = checkboxIsFinished.isChecked
+                sharedViewModel.save(navigationArgs!!)
                 navigation.goBack()
             }
         }

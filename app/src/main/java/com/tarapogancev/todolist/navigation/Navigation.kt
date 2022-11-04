@@ -20,7 +20,7 @@ class Navigation(navController: NavController) {
     fun listToEditTask(task: TodoTask) {
         var bundle = Bundle()
         bundle.putSerializable("object", task)
-        navController.navigate(R.id.action_todoListFragment_to_addNewTodoFragment, bundle)
+        navController.navigate(R.id.action_todoListFragment_to_editTodoFragment, bundle)
     }
 
 }

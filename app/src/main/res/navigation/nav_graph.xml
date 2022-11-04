@@ -8,25 +8,27 @@
     <fragment
         android:id="@+id/todoListFragment"
         android:name="com.tarapogancev.todolist.ui.TodoListFragment"
-        android:label="ToDo List"
+        android:label="My ToDo List"
         tools:layout="@layout/fragment_todo_list">
         <action
             android:id="@+id/action_todoListFragment_to_addNewTodoFragment"
-            app:destination="@id/addNewTodoFragment" >
+            app:destination="@id/addNewTodoFragment">
             <argument
                 android:name="id"
                 android:defaultValue="0L" />
         </action>
+        <action
+            android:id="@+id/action_todoListFragment_to_editTodoFragment"
+            app:destination="@id/editTodoFragment" />
     </fragment>
     <fragment
         android:id="@+id/addNewTodoFragment"
         android:name="com.tarapogancev.todolist.ui.AddNewTodoFragment"
         android:label="Add New Task"
-        tools:layout="@layout/fragment_add_new_todo">
-
-        <argument
-            android:name="id"
-            app:argType="long"
-            android:defaultValue="0L" />
-    </fragment>
+        tools:layout="@layout/fragment_add_new_todo"/>
+    <fragment
+        android:id="@+id/editTodoFragment"
+        android:name="com.tarapogancev.todolist.ui.EditTodoFragment"
+        android:label="Edit ToDo Task"
+        tools:layout="@layout/fragment_edit_todo" />
 </navigation>
