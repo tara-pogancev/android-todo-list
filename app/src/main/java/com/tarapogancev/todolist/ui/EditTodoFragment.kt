@@ -1,6 +1,7 @@
 package com.tarapogancev.todolist.ui
 
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -46,12 +47,19 @@ class EditTodoFragment : Fragment() {
             checkboxIsFinished.isChecked = navigationArgs?.isFinished ?: false
 
             buttonSave.setOnClickListener {
-                navigationArgs?.taskTitle = editTextTaskTitle.text.toString()
-                navigationArgs?.description = editTextTaskDescription.text.toString()
+                navigationArgs?.taskTitle = editTextTaskTitle.text.toString().trim()
+                navigationArgs?.description = editTextTaskDescription.text.toString().trim()
                 navigationArgs?.isFinished = checkboxIsFinished.isChecked
                 sharedViewModel.save(navigationArgs!!)
                 navigation.goBack()
             }
+
+            editTextTaskTitle.setOnKeyListener(object :View.OnKeyListener {
+                override fun onKey(p0: View?, p1: Int, p2: KeyEvent?): Boolean {
+                    buttonSave.isEnabled = editTextTaskTitle.text.toString().trim().isNotEmpty()
+                    return true
+                }
+            } )
         }
     }
 

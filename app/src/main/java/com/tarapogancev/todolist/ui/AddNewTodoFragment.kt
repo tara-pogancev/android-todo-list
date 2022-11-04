@@ -1,10 +1,13 @@
 package com.tarapogancev.todolist.ui
 
 import android.os.Bundle
+import android.util.Log
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.tarapogancev.todolist.MainActivity
@@ -41,10 +44,15 @@ class AddNewTodoFragment : Fragment() {
         binding?.apply {
             newTask = task
             buttonSave.setOnClickListener {
-                task.taskTitle = editTextTaskTitle.text.toString()
-                task.description = editTextTaskDescription.text.toString()
+                task.taskTitle = editTextTaskTitle.text.toString().trim()
+                task.description = editTextTaskDescription.text.toString().trim()
                 sharedViewModel.addNewTask(task)
                 navigation.goBack()
+            }
+
+            buttonSave.isEnabled = false
+            editTextTaskTitle.addTextChangedListener {
+                buttonSave.isEnabled = editTextTaskTitle.text.toString().trim().isNotEmpty()
             }
         }
     }

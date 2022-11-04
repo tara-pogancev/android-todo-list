@@ -67,22 +67,25 @@ class TodoListFragment : Fragment() {
                             val deletedTask = sharedViewModel.tasks.value!![position]
                             sharedViewModel.removeAt(position)
                             recyclerView.adapter?.notifyItemRemoved(position)
+                            recyclerView.adapter?.notifyItemRangeChanged(0, sharedViewModel.tasks.value!!.size)
+
                             Snackbar.make(recyclerView, deletedTask.taskTitle, Snackbar.LENGTH_LONG)
                                 .setAction("Undo", object: View.OnClickListener {
                                     override fun onClick(p0: View?) {
                                         sharedViewModel.tasks.value!!.add(position, deletedTask)
                                         recyclerView.adapter?.notifyItemInserted(position)
+                                        recyclerView.adapter?.notifyItemRangeChanged(0, sharedViewModel.tasks.value!!.size)
+
                                     }
                                 }).show()
                         }
 
                         ItemTouchHelper.RIGHT -> {
-
+                            val position = viewHolder.adapterPosition
+                            navigation.listToEditTask(sharedViewModel.tasks.value!![position])
 
                         }
-
                     }
-
                 }
             }
 

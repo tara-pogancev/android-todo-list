@@ -2,6 +2,7 @@ package com.tarapogancev.todolist.adapter
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,8 @@ class TodoListAdapter(private val context: Context, private val data: MutableLis
 
         if (position % 2 == 0) {
             holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.lightBlue))
+        } else {
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
         }
 
         holder.checkbox.isChecked = data[position].isFinished
@@ -54,6 +57,5 @@ class TodoListAdapter(private val context: Context, private val data: MutableLis
     override fun getItemCount(): Int {
         return data.size
     }
-
 
 }
