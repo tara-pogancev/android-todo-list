@@ -8,8 +8,9 @@
     <color name="secondaryDarkColor">#140078</color>
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
+    <color name="red">#8A2020</color>
     <color name="green">#78E151</color>
-    <color name="lightBlue">#CBF3FF</color>
+    <color name="lightBlue">#E7FAFF</color>
     <color name="gray">#F1F1F1</color>
     <color name="darkGray">#404040</color>
     <color name="black">#FF000000</color>

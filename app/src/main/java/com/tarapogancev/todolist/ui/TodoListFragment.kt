@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.tarapogancev.todolist.MainActivity
 import com.tarapogancev.todolist.R
 import com.tarapogancev.todolist.adapter.TodoListAdapter
@@ -59,9 +60,29 @@ class TodoListFragment : Fragment() {
 
             val swipeToDeleteCallback = object : SwipeToDeleteCallback(requireContext()) {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val position = viewHolder.adapterPosition
-                    sharedViewModel.removeAt(position)
-                    recyclerView.adapter?.notifyDataSetChanged()
+                    when (direction) {
+
+                        ItemTouchHelper.LEFT -> {
+                            val position = viewHolder.adapterPosition
+                            val deletedTask = sharedViewModel.tasks.value!![position]
+                            sharedViewModel.removeAt(position)
+                            recyclerView.adapter?.notifyItemRemoved(position)
+                            Snackbar.make(recyclerView, deletedTask.taskTitle, Snackbar.LENGTH_LONG)
+                                .setAction("Undo", object: View.OnClickListener {
+                                    override fun onClick(p0: View?) {
+                                        sharedViewModel.tasks.value!!.add(position, deletedTask)
+                                        recyclerView.adapter?.notifyItemInserted(position)
+                                    }
+                                }).show()
+                        }
+
+                        ItemTouchHelper.RIGHT -> {
+
+
+                        }
+
+                    }
+
                 }
             }
 
