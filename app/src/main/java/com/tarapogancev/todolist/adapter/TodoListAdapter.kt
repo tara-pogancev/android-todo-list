@@ -69,4 +69,14 @@ class TodoListAdapter(private val context: Context, private val navigation: Navi
         }
     }
 
+    // TODO
+    fun addItem(task: TodoTask) {
+
+    }
+
+    // TODO
+    fun removeItem(position: Int) {
+        viewModel.removeAt(position)
+    }
+
 }

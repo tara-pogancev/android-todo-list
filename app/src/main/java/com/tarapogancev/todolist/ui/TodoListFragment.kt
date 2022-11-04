@@ -2,7 +2,9 @@ package com.tarapogancev.todolist.ui
 
 import android.content.Context.VIBRATOR_SERVICE
 import android.os.Bundle
+import android.os.Handler
 import android.os.Vibrator
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,9 +52,17 @@ class TodoListFragment : Fragment() {
         val vibration = context?.getSystemService(VIBRATOR_SERVICE) as Vibrator?
 
         val adapter = TodoListAdapter(requireContext(), navigation, sharedViewModel)
+        binding?.recyclerView?.adapter = adapter
 
-        sharedViewModel.tasks.observe(this.viewLifecycleOwner) {
-            tasks -> tasks.let { adapter.submitList(it) }
+        sharedViewModel.tasks.observe(this.viewLifecycleOwner) { tasks ->
+            tasks.let {
+                adapter.submitList(it)
+            }
+            adapter.notifyDataSetChanged()
+            binding?.recyclerView?.adapter?.notifyDataSetChanged()
+            // TODO!!!
+            setNoTasksTextVisibility(binding!!.textNoTasksYet)
+            Log.e("1", "deleted")
         }
 
         binding?.apply {
@@ -62,9 +72,6 @@ class TodoListFragment : Fragment() {
                 navigation.listToNewTask()
             }
 
-            setNoTasksTextVisibility(textNoTasksYet)
-
-            recyclerView.adapter = adapter
             recyclerView.setHasFixedSize(false)
 
             val swipeToDeleteCallback = object : SwipeToDeleteCallback(requireContext()) {
@@ -76,23 +83,14 @@ class TodoListFragment : Fragment() {
                             val deletedTask = sharedViewModel.tasks.value!![position]
                             sharedViewModel.removeAt(position)
                             recyclerView.adapter?.notifyItemRemoved(position)
-                            recyclerView.adapter?.notifyItemRangeChanged(
-                                0,
-                                sharedViewModel.getTaskListSize()
-                            )
                             vibration?.vibrate(SHORT_VIBRATION_DURATION)
 
                             setNoTasksTextVisibility(textNoTasksYet)
 
                             Snackbar.make(recyclerView, deletedTask.taskTitle, Snackbar.LENGTH_LONG)
                                 .setAction("Undo") {
-                                    /// sharedViewModel.tasks.value!!.add(position, deletedTask)
                                     sharedViewModel.addNewTask(deletedTask)
                                     recyclerView.adapter?.notifyItemInserted(position)
-                                    recyclerView.adapter?.notifyItemRangeChanged(
-                                        0,
-                                        sharedViewModel.getTaskListSize()
-                                    )
                                     setNoTasksTextVisibility(textNoTasksYet)
                                 }.show()
                         }
@@ -110,15 +108,19 @@ class TodoListFragment : Fragment() {
             val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
             itemTouchHelper.attachToRecyclerView(recyclerView)
 
+            setNoTasksTextVisibility(textNoTasksYet)
         }
     }
 
     fun setNoTasksTextVisibility(textNoTasksYet: TextView) {
-        if (sharedViewModel.getTaskListSize() == 0) {
-            textNoTasksYet.visibility = View.VISIBLE
-        } else {
-            textNoTasksYet.visibility = View.INVISIBLE
-        }
+//        Handler().postDelayed({
+//            if (sharedViewModel.getTaskListSize() == 0) {
+//                textNoTasksYet.visibility = View.VISIBLE
+//            } else {
+//                textNoTasksYet.visibility = View.INVISIBLE
+//            }
+//        }, 100)
+
     }
 
     override fun onDestroy() {
