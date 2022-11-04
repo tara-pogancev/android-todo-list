@@ -12,11 +12,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.tarapogancev.todolist.BaseApplication
 import com.tarapogancev.todolist.MainActivity
 import com.tarapogancev.todolist.adapter.TodoListAdapter
 import com.tarapogancev.todolist.databinding.FragmentTodoListBinding
 import com.tarapogancev.todolist.navigation.Navigation
 import com.tarapogancev.todolist.viewModel.TodoViewModel
+import com.tarapogancev.todolist.viewModel.TodoViewModelFactory
 
 const val SHORT_VIBRATION_DURATION = 100L
 
@@ -26,7 +28,11 @@ class TodoListFragment : Fragment() {
 
     private lateinit var navigation: Navigation
 
-    private val sharedViewModel: TodoViewModel by activityViewModels()
+    private val sharedViewModel: TodoViewModel by activityViewModels {
+        TodoViewModelFactory(
+            (activity?.application as BaseApplication).database.todoTaskDao()
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +49,11 @@ class TodoListFragment : Fragment() {
 
         val vibration = context?.getSystemService(VIBRATOR_SERVICE) as Vibrator?
 
-        val adapter = TodoListAdapter(requireContext(), sharedViewModel.tasks.value!!, navigation)
+        val adapter = TodoListAdapter(requireContext(), navigation, sharedViewModel)
+
+        sharedViewModel.tasks.observe(this.viewLifecycleOwner) {
+            tasks -> tasks.let { adapter.submitList(it) }
+        }
 
         binding?.apply {
             lifecycleOwner = viewLifecycleOwner
@@ -68,7 +78,7 @@ class TodoListFragment : Fragment() {
                             recyclerView.adapter?.notifyItemRemoved(position)
                             recyclerView.adapter?.notifyItemRangeChanged(
                                 0,
-                                sharedViewModel.tasks.value!!.size
+                                sharedViewModel.getTaskListSize()
                             )
                             vibration?.vibrate(SHORT_VIBRATION_DURATION)
 
@@ -76,13 +86,13 @@ class TodoListFragment : Fragment() {
 
                             Snackbar.make(recyclerView, deletedTask.taskTitle, Snackbar.LENGTH_LONG)
                                 .setAction("Undo") {
-                                    sharedViewModel.tasks.value!!.add(position, deletedTask)
+                                    /// sharedViewModel.tasks.value!!.add(position, deletedTask)
+                                    sharedViewModel.addNewTask(deletedTask)
                                     recyclerView.adapter?.notifyItemInserted(position)
                                     recyclerView.adapter?.notifyItemRangeChanged(
                                         0,
-                                        sharedViewModel.tasks.value!!.size
+                                        sharedViewModel.getTaskListSize()
                                     )
-
                                     setNoTasksTextVisibility(textNoTasksYet)
                                 }.show()
                         }
@@ -104,7 +114,7 @@ class TodoListFragment : Fragment() {
     }
 
     fun setNoTasksTextVisibility(textNoTasksYet: TextView) {
-        if (sharedViewModel.tasks.value?.size == 0) {
+        if (sharedViewModel.getTaskListSize() == 0) {
             textNoTasksYet.visibility = View.VISIBLE
         } else {
             textNoTasksYet.visibility = View.INVISIBLE

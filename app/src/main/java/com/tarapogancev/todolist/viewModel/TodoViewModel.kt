@@ -1,47 +1,58 @@
 package com.tarapogancev.todolist.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.tarapogancev.todolist.dao.TodoTaskDao
 import com.tarapogancev.todolist.model.TodoTask
+import kotlinx.coroutines.launch
 
-class TodoViewModel : ViewModel() {
+class TodoViewModel(private val todoTaskDao: TodoTaskDao) : ViewModel() {
 
-    private val _tasks = MutableLiveData<MutableList<TodoTask>>(mutableListOf())
-    val tasks: LiveData<MutableList<TodoTask>> = _tasks
+    val tasks: LiveData<List<TodoTask>> = todoTaskDao.getTasks().asLiveData()
 
     fun addNewTask(newTask: TodoTask) {
-        newTask.id = generateId()
-        _tasks.value?.add(newTask)
-    }
-
-    fun getById(id: Long): TodoTask? {
-        var filtered = (_tasks.value)!!.filter { e -> e.id == id }
-        if (filtered.isEmpty()) {
-            return null
-        } else {
-            return filtered[0]
+        viewModelScope.launch {
+            todoTaskDao.insert(newTask)
         }
-    }
-
-    fun generateId(): Long {
-        var id = (1..1000).random().toLong()
-        while (getById(id) != null) {
-            id = (1..1000).random().toLong()
-        }
-        return id
     }
 
     fun save(newTask: TodoTask) {
-        _tasks.value?.find { it.id == newTask.id }?.taskTitle = newTask.taskTitle
+        viewModelScope.launch {
+            todoTaskDao.update(newTask)
+        }
     }
 
     fun removeAt(position: Int) {
-        _tasks.value?.removeAt(position)
+        val taskToDelete = tasks.value?.get(position)
+        viewModelScope.launch {
+            if (taskToDelete != null) {
+                todoTaskDao.delete(taskToDelete)
+            }
+        }
     }
 
-    fun checkUncheck(task: TodoTask) {
-        _tasks.value?.find { it.id == task.id }?.isFinished = !task.isFinished
+    fun checkUncheckTask(task: TodoTask) {
+        task.isFinished = !task.isFinished
+        viewModelScope.launch {
+            save(task)
+        }
     }
 
+    fun getAllTasks(): List<TodoTask> {
+        return tasks.value ?: listOf();
+    }
+
+    fun getTaskListSize(): Int {
+        return getAllTasks().size
+    }
+
+}
+
+class TodoViewModelFactory (private val todoTaskDao: TodoTaskDao): ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(TodoViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return TodoViewModel(todoTaskDao) as T
+        }
+        throw java.lang.IllegalArgumentException("Unknown ViewModel class")
+    }
 }

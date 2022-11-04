@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import com.tarapogancev.todolist.BaseApplication
 import com.tarapogancev.todolist.MainActivity
 import com.tarapogancev.todolist.R
 import com.tarapogancev.todolist.databinding.FragmentAddNewTodoBinding
@@ -14,6 +15,7 @@ import com.tarapogancev.todolist.databinding.FragmentEditTodoBinding
 import com.tarapogancev.todolist.model.TodoTask
 import com.tarapogancev.todolist.navigation.Navigation
 import com.tarapogancev.todolist.viewModel.TodoViewModel
+import com.tarapogancev.todolist.viewModel.TodoViewModelFactory
 
 
 class EditTodoFragment : Fragment() {
@@ -22,7 +24,11 @@ class EditTodoFragment : Fragment() {
 
     private lateinit var navigation: Navigation
 
-    private val sharedViewModel: TodoViewModel by activityViewModels()
+    private val sharedViewModel: TodoViewModel by activityViewModels {
+        TodoViewModelFactory(
+            (activity?.application as BaseApplication).database.todoTaskDao()
+        )
+    }
 
     private var navigationArgs: TodoTask? = null
 

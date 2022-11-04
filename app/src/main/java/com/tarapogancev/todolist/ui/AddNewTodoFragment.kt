@@ -10,11 +10,13 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
+import com.tarapogancev.todolist.BaseApplication
 import com.tarapogancev.todolist.MainActivity
 import com.tarapogancev.todolist.databinding.FragmentAddNewTodoBinding
 import com.tarapogancev.todolist.model.TodoTask
 import com.tarapogancev.todolist.navigation.Navigation
 import com.tarapogancev.todolist.viewModel.TodoViewModel
+import com.tarapogancev.todolist.viewModel.TodoViewModelFactory
 
 
 class AddNewTodoFragment : Fragment() {
@@ -23,7 +25,11 @@ class AddNewTodoFragment : Fragment() {
 
     private lateinit var navigation: Navigation
 
-    private val sharedViewModel: TodoViewModel by activityViewModels()
+    private val sharedViewModel: TodoViewModel by activityViewModels {
+        TodoViewModelFactory(
+            (activity?.application as BaseApplication).database.todoTaskDao()
+        )
+    }
 
     var task = TodoTask(0, "", "", false)
 
