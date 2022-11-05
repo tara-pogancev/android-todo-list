@@ -23,24 +23,9 @@ import com.tarapogancev.todolist.navigation.Navigation
 import com.tarapogancev.todolist.viewModel.TodoViewModel
 
 class TodoListAdapter(private val context: Context, private val navigation: Navigation, private val viewModel: TodoViewModel)
-    : ListAdapter<TodoTask, TodoListAdapter.TodoListViewHolder>(DiffCallback) {
+    : RecyclerView.Adapter<TodoListAdapter.TodoListViewHolder>() {
 
-    class TodoListViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        var taskTitle: TextView = view.findViewById(R.id.text_taskTitle)
-        var cardView: MaterialCardView = view.findViewById(R.id.cardView_listItem)
-        var checkbox: CheckBox = view.findViewById(R.id.checkbox)
-    }
-
-    companion object DiffCallback: DiffUtil.ItemCallback<TodoTask>() {
-        override fun areItemsTheSame(oldItem: TodoTask, newItem: TodoTask): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: TodoTask, newItem: TodoTask): Boolean {
-            return oldItem == newItem
-        }
-
-    }
+    var tasks: MutableList<TodoTask> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoListViewHolder {
         val adapterLayout = LayoutInflater.from(parent.context)
@@ -49,7 +34,7 @@ class TodoListAdapter(private val context: Context, private val navigation: Navi
     }
 
     override fun onBindViewHolder(holder: TodoListViewHolder, position: Int) {
-        holder.taskTitle.text = getItem(position).taskTitle
+        holder.taskTitle.text = tasks[position].taskTitle
 
         if (position % 2 == 0) {
             holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.lightBlue))
@@ -57,26 +42,34 @@ class TodoListAdapter(private val context: Context, private val navigation: Navi
             holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
         }
 
-        holder.checkbox.isChecked = getItem(position).isFinished
+        holder.checkbox.isChecked = tasks[position].isFinished
 
         holder.checkbox.setOnClickListener {
-            viewModel.checkUncheckTask(getItem(position))
-            holder.checkbox.isChecked = getItem(position).isFinished
+            viewModel.checkUncheckTask(tasks[position])
+            holder.checkbox.isChecked = tasks[position].isFinished
         }
 
         holder.cardView.setOnClickListener {
-            navigation.listToEditTask(getItem(position))
+            navigation.listToEditTask(tasks[position])
         }
     }
 
-    // TODO
-    fun addItem(task: TodoTask) {
-
+    fun addItem(task: TodoTask, position: Int) {
+        tasks.add(position, task)
     }
 
-    // TODO
     fun removeItem(position: Int) {
         viewModel.removeAt(position)
+    }
+
+    override fun getItemCount(): Int {
+        return tasks.size
+    }
+
+    class TodoListViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+        var taskTitle: TextView = view.findViewById(R.id.text_taskTitle)
+        var cardView: MaterialCardView = view.findViewById(R.id.cardView_listItem)
+        var checkbox: CheckBox = view.findViewById(R.id.checkbox)
     }
 
 }
